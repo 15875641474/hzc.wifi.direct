@@ -28,6 +28,13 @@ dependencies {
 }
 ```
 
+### USE
+```
+IHzcWifiDirectHelp.init
+IHzcWifiDirectHelp.startSearch
+IHzcWifiDirectHelp.connectionDevice
+```
+just done，so easy !!
 
 ### API
 Lock at the class `IHzcWifiDirectHelp` , it has describe.
