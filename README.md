@@ -1,4 +1,4 @@
-What this ?
+### What this ?
 
 it is wifi-direct for android.
 
@@ -11,12 +11,10 @@ okway,, we say chinese
 接口类的实现采用线程互斥 + 动态代理
 
 
-How to Ues ?
+### How to Ues ?
 
 in gradle
-
-
-`
+```
 allprojects {
     repositories {
         ...
@@ -28,8 +26,8 @@ allprojects {
 dependencies {
     implementation 'com.github.15875641474:hzc.wifi.direct:v1.0.0'
 }
+```
 
-`
 
-API
+### API
 Lock at the class `IHzcWifiDirectHelp` , it has describe.
