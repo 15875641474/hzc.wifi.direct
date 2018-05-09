@@ -30,6 +30,7 @@ dependencies {
 
 ### USE
 ```
+IHzcWifiDirectHelp xx = HzcWifiDirectHelpImpl.newInstance();
 IHzcWifiDirectHelp.init
 IHzcWifiDirectHelp.startSearch
 IHzcWifiDirectHelp.connectionDevice
