@@ -9,25 +9,25 @@ import android.net.wifi.p2p.WifiP2pDeviceList;
 public abstract class HzcWifiDirectListener {
     abstract void searchDevicesSuccess();
 
-    void searchDevicesFailure(int i) {
+    public void searchDevicesFailure(int i) {
 
     }
 
-    void checkedWifiDeviceSupport(boolean support) {
+    public void checkedWifiDeviceSupport(boolean support) {
 
     }
 
-    abstract void onGetDevicesList(WifiP2pDeviceList wifiP2pDeviceList);
+    public abstract void onGetDevicesList(WifiP2pDeviceList wifiP2pDeviceList);
 
-    abstract void connectionDeviceSuccess();
+    public abstract void connectionDeviceSuccess();
 
-    void connectionDeviceFailure(int i) {
+    public void connectionDeviceFailure(int i) {
 
     }
 
-    abstract void disConnectionSuccess();
+    public abstract void disConnectionSuccess();
 
-    void disConnectionFailure(int i) {
+    public void disConnectionFailure(int i) {
 
     }
 }
