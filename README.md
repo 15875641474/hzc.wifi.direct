@@ -24,7 +24,7 @@ allprojects {
 
 
 dependencies {
-    implementation 'com.github.15875641474:hzc.wifi.direct:v1.0.0'
+    implementation 'com.github.15875641474:hzc.wifi.direct:v1.0.4'
 }
 ```
 
