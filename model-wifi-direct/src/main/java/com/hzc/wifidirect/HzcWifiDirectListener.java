@@ -7,7 +7,7 @@ import android.net.wifi.p2p.WifiP2pDeviceList;
  * 328854225@qq.com
  */
 public abstract class HzcWifiDirectListener {
-    abstract void searchDevicesSuccess();
+    public abstract void searchDevicesSuccess();
 
     public void searchDevicesFailure(int i) {
 
