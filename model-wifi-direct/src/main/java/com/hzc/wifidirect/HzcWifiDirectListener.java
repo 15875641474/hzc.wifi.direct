@@ -18,12 +18,12 @@ public abstract class HzcWifiDirectListener {
     /**
      * 对等网络正在搜索中
      */
-    abstract void onScaning();
+    public abstract void onScaning();
 
     /**
      * 停止对等网络的搜索
      */
-    abstract void onScanStop();
+    public abstract void onScanStop();
 
     public abstract void disConnectionSuccess();
 
