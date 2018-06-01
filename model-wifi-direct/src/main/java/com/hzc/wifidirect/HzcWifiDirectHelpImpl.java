@@ -5,9 +5,11 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.NetworkInfo;
 import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pDeviceList;
+import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.util.Log;
 
@@ -25,7 +27,6 @@ public class HzcWifiDirectHelpImpl implements IHzcWifiDirectHelp {
     private static final String tag = "HzcWifiDirectHelpImpl";
 
     boolean isEnabled = false, isInit = false;
-    HzcWifiDirectListener hzcWifiDirectListener;
     WifiP2pManager wifiP2pManager;
     WifiP2pManager.Channel wifiChannel;
     Activity activity;
@@ -82,7 +83,6 @@ public class HzcWifiDirectHelpImpl implements IHzcWifiDirectHelp {
         wifiChannel = null;
         wifiP2pManager = null;
         activity = null;
-        hzcWifiDirectListener = null;
         broadcaseWifiDirect = null;
         innerObject = null;
         isInit = false;
@@ -102,10 +102,9 @@ public class HzcWifiDirectHelpImpl implements IHzcWifiDirectHelp {
      * 初始化
      *
      * @param activity
-     * @param hzcWifiDirectListener
      */
     @Override
-    public void init(Activity activity, HzcWifiDirectListener hzcWifiDirectListener) {
+    public void init(Activity activity) {
         this.activity = activity;
         wifiP2pManager = (WifiP2pManager) activity.getSystemService(Context.WIFI_P2P_SERVICE);
         wifiChannel = wifiP2pManager.initialize(activity, activity.getMainLooper(), new WifiP2pManager.ChannelListener() {
@@ -115,7 +114,6 @@ public class HzcWifiDirectHelpImpl implements IHzcWifiDirectHelp {
             }
         });
 
-        this.hzcWifiDirectListener = hzcWifiDirectListener;
         //加入wifidirect的广播监听
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
@@ -139,13 +137,17 @@ public class HzcWifiDirectHelpImpl implements IHzcWifiDirectHelp {
             @Override
             public void onSuccess() {
                 Log.i(tag, "disConnection success");
-                hzcWifiDirectListener.disConnectionSuccess();
+                if (onDisConnectionSuccessListener != null) {
+                    onDisConnectionSuccessListener.disConnectionSuccess();
+                }
             }
 
             @Override
             public void onFailure(int i) {
                 Log.i(tag, "disConnection failure");
-                hzcWifiDirectListener.disConnectionFailure(i);
+                if (onDisConnectionFailureListener != null) {
+                    onDisConnectionFailureListener.disConnectionFailure(i);
+                }
             }
         });
     }
@@ -163,13 +165,11 @@ public class HzcWifiDirectHelpImpl implements IHzcWifiDirectHelp {
             @Override
             public void onSuccess() {
                 Log.i(tag, String.format("connectionDevice success [%s.%s]", device.deviceName, device.deviceAddress));
-                hzcWifiDirectListener.connectionDeviceSuccess();
             }
 
             @Override
             public void onFailure(int i) {
                 Log.i(tag, String.format("connectionDevice failure [%s.%s]", device.deviceName, device.deviceAddress));
-                hzcWifiDirectListener.connectionDeviceFailure(i);
             }
         });
     }
@@ -182,13 +182,17 @@ public class HzcWifiDirectHelpImpl implements IHzcWifiDirectHelp {
             @Override
             public void onSuccess() {
                 Log.i(tag, "started search device");
-                hzcWifiDirectListener.searchDevicesSuccess();
+                if (onSearchDevicesSuccessListener != null) {
+                    onSearchDevicesSuccessListener.searchDevicesSuccess();
+                }
             }
 
             @Override
             public void onFailure(int i) {
                 Log.i(tag, "startSearch search device error");
-                hzcWifiDirectListener.searchDevicesFailure(i);
+                if (onSearchDevicesFailureListener != null) {
+                    onSearchDevicesFailureListener.searchDevicesFailure(i);
+                }
             }
         });
     }
@@ -204,8 +208,9 @@ public class HzcWifiDirectHelpImpl implements IHzcWifiDirectHelp {
                 case WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION: {//P2P设备启用状态
                     boolean support = intent.getIntExtra(WifiP2pManager.EXTRA_WIFI_STATE, -1) == WifiP2pManager.WIFI_P2P_STATE_ENABLED;
                     isEnabled = support;
-                    Log.i(tag, "checkedWifiDeviceSupport = " + support);
-                    hzcWifiDirectListener.checkedWifiDeviceSupport(support);
+                    if (onCheckedWifiDeviceSupportListener != null) {
+                        onCheckedWifiDeviceSupportListener.checkedWifiDeviceSupport(support);
+                    }
                 }
                 break;
                 case WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION: {//P2P对等网络列表发生改变
@@ -213,22 +218,142 @@ public class HzcWifiDirectHelpImpl implements IHzcWifiDirectHelp {
                         //获得设备列表
                         @Override
                         public void onPeersAvailable(WifiP2pDeviceList wifiP2pDeviceList) {
-                            Log.i(tag, "onPeersAvailable");
-                            hzcWifiDirectListener.onGetDevicesList(wifiP2pDeviceList);
+                            if (onGetDevicesListListener != null) {
+                                onGetDevicesListListener.onGetDevicesList(wifiP2pDeviceList);
+                            }
                         }
                     });
                 }
                 break;
                 case WifiP2pManager.WIFI_P2P_DISCOVERY_CHANGED_ACTION: {//是否查找状态
                     int State = intent.getIntExtra(WifiP2pManager.EXTRA_DISCOVERY_STATE, -1);
-                    if (State == WifiP2pManager.WIFI_P2P_DISCOVERY_STARTED)//已开启搜索
-                        hzcWifiDirectListener.onScaning();
-                    else if (State == WifiP2pManager.WIFI_P2P_DISCOVERY_STOPPED)//已停止搜索
-                        hzcWifiDirectListener.onScanStop();
+                    if (State == WifiP2pManager.WIFI_P2P_DISCOVERY_STARTED) {//已开启搜索
+                        if (onScaningListener != null) {
+                            onScaningListener.onScaning();
+                        }
+                    } else if (State == WifiP2pManager.WIFI_P2P_DISCOVERY_STOPPED) {//已停止搜索
+                        if (onScanStopListener != null) {
+                            onScanStopListener.onScanStop();
+                        }
+                    }
+                }
+                break;
+                case WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION: {//wifi链接状态
+                    NetworkInfo networkInfo = (NetworkInfo) intent.getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
+                    if (networkInfo.isConnected()) {
+                        WifiP2pInfo wifip2pinfo = (WifiP2pInfo) intent.getParcelableExtra(WifiP2pManager.EXTRA_WIFI_P2P_INFO);
+                        if (onConnectionDeviceSuccessListener != null) {
+                            onConnectionDeviceSuccessListener.connectionDeviceSuccess(networkInfo, wifip2pinfo);
+                        }
+                    } else {
+                        if (onDisConnectionListener != null) {
+                            onDisConnectionListener.disConnection(networkInfo);
+                        }
+                    }
                 }
                 break;
             }
         }
     }
 
+
+    OnCheckedWifiDeviceSupportListener onCheckedWifiDeviceSupportListener;
+    OnConnectionDeviceSuccessListener onConnectionDeviceSuccessListener;
+    OnDisConnectionListener onDisConnectionListener;
+    OnGetDevicesListListener onGetDevicesListListener;
+    OnSearchDevicesSuccessListener onSearchDevicesSuccessListener;
+    OnScaningListener onScaningListener;
+    OnScanStopListener onScanStopListener;
+    OnDisConnectionSuccessListener onDisConnectionSuccessListener;
+    OnDisConnectionFailureListener onDisConnectionFailureListener;
+    OnConnectionDeviceFailureListener onConnectionDeviceFailureListener;
+    OnSearchDevicesFailureListener onSearchDevicesFailureListener;
+
+    public interface OnCheckedWifiDeviceSupportListener {
+        void checkedWifiDeviceSupport(boolean support);
+    }
+
+    public interface OnConnectionDeviceSuccessListener {
+        void connectionDeviceSuccess(NetworkInfo networkInfo, WifiP2pInfo wifip2pinfo);
+    }
+
+    public interface OnDisConnectionListener {
+        void disConnection(NetworkInfo networkInfo);
+    }
+
+    public interface OnGetDevicesListListener {
+        void onGetDevicesList(WifiP2pDeviceList wifiP2pDeviceList);
+    }
+
+    public interface OnSearchDevicesSuccessListener {
+        void searchDevicesSuccess();
+    }
+
+    public interface OnScaningListener {
+        void onScaning();
+    }
+
+    public interface OnScanStopListener {
+        void onScanStop();
+    }
+
+    public interface OnDisConnectionSuccessListener {
+        void disConnectionSuccess();
+    }
+
+    public interface OnDisConnectionFailureListener {
+        void disConnectionFailure(int i);
+    }
+
+    public interface OnConnectionDeviceFailureListener {
+        void connectionDeviceFailure(int i);
+    }
+
+    public interface OnSearchDevicesFailureListener {
+        void searchDevicesFailure(int i);
+    }
+
+    public void setOnCheckedWifiDeviceSupportListener(OnCheckedWifiDeviceSupportListener onCheckedWifiDeviceSupportListener) {
+        this.onCheckedWifiDeviceSupportListener = onCheckedWifiDeviceSupportListener;
+    }
+
+    public void setOnConnectionDeviceSuccessListener(OnConnectionDeviceSuccessListener onConnectionDeviceSuccessListener) {
+        this.onConnectionDeviceSuccessListener = onConnectionDeviceSuccessListener;
+    }
+
+    public void setOnDisConnectionListener(OnDisConnectionListener onDisConnectionListener) {
+        this.onDisConnectionListener = onDisConnectionListener;
+    }
+
+    public void setOnGetDevicesListListener(OnGetDevicesListListener onGetDevicesListListener) {
+        this.onGetDevicesListListener = onGetDevicesListListener;
+    }
+
+    public void setOnSearchDevicesSuccessListener(OnSearchDevicesSuccessListener onSearchDevicesSuccessListener) {
+        this.onSearchDevicesSuccessListener = onSearchDevicesSuccessListener;
+    }
+
+    public void setOnScaningListener(OnScaningListener onScaningListener) {
+        this.onScaningListener = onScaningListener;
+    }
+
+    public void setOnScanStopListener(OnScanStopListener onScanStopListener) {
+        this.onScanStopListener = onScanStopListener;
+    }
+
+    public void setOnDisConnectionSuccessListener(OnDisConnectionSuccessListener onDisConnectionSuccessListener) {
+        this.onDisConnectionSuccessListener = onDisConnectionSuccessListener;
+    }
+
+    public void setOnDisConnectionFailureListener(OnDisConnectionFailureListener onDisConnectionFailureListener) {
+        this.onDisConnectionFailureListener = onDisConnectionFailureListener;
+    }
+
+    public void setOnConnectionDeviceFailureListener(OnConnectionDeviceFailureListener onConnectionDeviceFailureListener) {
+        this.onConnectionDeviceFailureListener = onConnectionDeviceFailureListener;
+    }
+
+    public void setOnSearchDevicesFailureListener(OnSearchDevicesFailureListener onSearchDevicesFailureListener) {
+        this.onSearchDevicesFailureListener = onSearchDevicesFailureListener;
+    }
 }

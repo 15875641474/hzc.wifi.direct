@@ -32,9 +32,8 @@ public interface IHzcWifiDirectHelp {
      * 初始化
      *
      * @param activity
-     * @param hzcWifiDirectListener
      */
-    void init(Activity activity, HzcWifiDirectListener hzcWifiDirectListener);
+    void init(Activity activity);
 
     /**
      * 取消初始化
@@ -62,4 +61,25 @@ public interface IHzcWifiDirectHelp {
      */
     boolean canBusiness();
 
+    void setOnCheckedWifiDeviceSupportListener(HzcWifiDirectHelpImpl.OnCheckedWifiDeviceSupportListener onCheckedWifiDeviceSupportListener);
+
+    void setOnConnectionDeviceSuccessListener(HzcWifiDirectHelpImpl.OnConnectionDeviceSuccessListener onConnectionDeviceSuccessListener);
+
+    void setOnDisConnectionListener(HzcWifiDirectHelpImpl.OnDisConnectionListener onDisConnectionListener);
+
+    void setOnGetDevicesListListener(HzcWifiDirectHelpImpl.OnGetDevicesListListener onGetDevicesListListener);
+
+    void setOnSearchDevicesSuccessListener(HzcWifiDirectHelpImpl.OnSearchDevicesSuccessListener onSearchDevicesSuccessListener);
+
+    void setOnScaningListener(HzcWifiDirectHelpImpl.OnScaningListener onScaningListener);
+
+    void setOnScanStopListener(HzcWifiDirectHelpImpl.OnScanStopListener onScanStopListener);
+
+    void setOnDisConnectionSuccessListener(HzcWifiDirectHelpImpl.OnDisConnectionSuccessListener onDisConnectionSuccessListener);
+
+    void setOnDisConnectionFailureListener(HzcWifiDirectHelpImpl.OnDisConnectionFailureListener onDisConnectionFailureListener);
+
+    void setOnConnectionDeviceFailureListener(HzcWifiDirectHelpImpl.OnConnectionDeviceFailureListener onConnectionDeviceFailureListener);
+
+    void setOnSearchDevicesFailureListener(HzcWifiDirectHelpImpl.OnSearchDevicesFailureListener onSearchDevicesFailureListener);
 }

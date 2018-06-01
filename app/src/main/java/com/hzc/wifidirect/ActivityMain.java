@@ -19,7 +19,6 @@ public class ActivityMain extends AppCompatActivity {
 
     List<WifiP2pDevice> wifiP2pDevices = new ArrayList<>();
     IHzcWifiDirectHelp iHzcWifiDirectHelp;
-    HzcWifiDirectListener hzcWifiDirectListener;
     private android.widget.Button btnsearch;
     private android.widget.Button btndisconnection;
     private android.support.v7.widget.RecyclerView recyclerview;
@@ -64,45 +63,6 @@ public class ActivityMain extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        hzcWifiDirectListener = new HzcWifiDirectListener() {
-
-
-            @Override
-            public void searchDevicesSuccess() {
-
-            }
-
-            @Override
-            public void onGetDevicesList(WifiP2pDeviceList wifiP2pDeviceList) {
-                wifiP2pDevices.clear();
-                for (WifiP2pDevice device : wifiP2pDeviceList.getDeviceList()) {
-                    wifiP2pDevices.add(device);
-                }
-                recyclerview.setAdapter(new Adapter());
-            }
-
-            @Override
-            public void connectionDeviceSuccess() {
-
-            }
-
-            @Override
-            void onScaning() {
-
-            }
-
-            @Override
-            void onScanStop() {
-
-            }
-
-            @Override
-            public void disConnectionSuccess() {
-
-            }
-
-        };
         Button btnuninit = (Button) findViewById(R.id.btn_uninit);
         Button btninit = (Button) findViewById(R.id.btn_init);
         this.recyclerview = (RecyclerView) findViewById(R.id.recyclerview);
@@ -119,7 +79,17 @@ public class ActivityMain extends AppCompatActivity {
         btninit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                iHzcWifiDirectHelp.init(ActivityMain.this, hzcWifiDirectListener);
+                iHzcWifiDirectHelp.init(ActivityMain.this);
+                iHzcWifiDirectHelp.setOnGetDevicesListListener(new HzcWifiDirectHelpImpl.OnGetDevicesListListener() {
+                    @Override
+                    public void onGetDevicesList(WifiP2pDeviceList wifiP2pDeviceList) {
+                        wifiP2pDevices.clear();
+                        for (WifiP2pDevice device : wifiP2pDeviceList.getDeviceList()) {
+                            wifiP2pDevices.add(device);
+                        }
+                        recyclerview.setAdapter(new Adapter());
+                    }
+                });
             }
         });
 
