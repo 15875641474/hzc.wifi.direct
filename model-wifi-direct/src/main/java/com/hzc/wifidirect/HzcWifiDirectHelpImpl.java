@@ -48,6 +48,7 @@ public class HzcWifiDirectHelpImpl implements IHzcWifiDirectHelp {
         return isEnabled & isInit;
     }
 
+
     public static IHzcWifiDirectHelp newInstance() {
         return iHzcWifiDirectHelp;
     }
@@ -121,6 +122,7 @@ public class HzcWifiDirectHelpImpl implements IHzcWifiDirectHelp {
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
+        intentFilter.addAction(WifiP2pManager.WIFI_P2P_DISCOVERY_CHANGED_ACTION);
         broadcaseWifiDirect = new BroadcaseWifiDirect();
         activity.registerReceiver(broadcaseWifiDirect, intentFilter);
         isInit = true;
@@ -199,14 +201,14 @@ public class HzcWifiDirectHelpImpl implements IHzcWifiDirectHelp {
         public void onReceive(Context context, Intent intent) {
             Log.i(tag, "broadcase.action=" + intent.getAction());
             switch (intent.getAction()) {
-                case WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION: {
+                case WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION: {//P2P设备启用状态
                     boolean support = intent.getIntExtra(WifiP2pManager.EXTRA_WIFI_STATE, -1) == WifiP2pManager.WIFI_P2P_STATE_ENABLED;
                     isEnabled = support;
                     Log.i(tag, "checkedWifiDeviceSupport = " + support);
                     hzcWifiDirectListener.checkedWifiDeviceSupport(support);
                 }
                 break;
-                case WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION: {
+                case WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION: {//P2P对等网络列表发生改变
                     wifiP2pManager.requestPeers(wifiChannel, new WifiP2pManager.PeerListListener() {
                         //获得设备列表
                         @Override
@@ -215,6 +217,14 @@ public class HzcWifiDirectHelpImpl implements IHzcWifiDirectHelp {
                             hzcWifiDirectListener.onGetDevicesList(wifiP2pDeviceList);
                         }
                     });
+                }
+                break;
+                case WifiP2pManager.WIFI_P2P_DISCOVERY_CHANGED_ACTION: {//是否查找状态
+                    int State = intent.getIntExtra(WifiP2pManager.EXTRA_DISCOVERY_STATE, -1);
+                    if (State == WifiP2pManager.WIFI_P2P_DISCOVERY_STARTED)//已开启搜索
+                        hzcWifiDirectListener.onScaning();
+                    else if (State == WifiP2pManager.WIFI_P2P_DISCOVERY_STOPPED)//已停止搜索
+                        hzcWifiDirectListener.onScanStop();
                 }
                 break;
             }

@@ -66,13 +66,15 @@ public class ActivityMain extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         hzcWifiDirectListener = new HzcWifiDirectListener() {
+
+
             @Override
-            void searchDevicesSuccess() {
+            public void searchDevicesSuccess() {
 
             }
 
             @Override
-            void onGetDevicesList(WifiP2pDeviceList wifiP2pDeviceList) {
+            public void onGetDevicesList(WifiP2pDeviceList wifiP2pDeviceList) {
                 wifiP2pDevices.clear();
                 for (WifiP2pDevice device : wifiP2pDeviceList.getDeviceList()) {
                     wifiP2pDevices.add(device);
@@ -81,14 +83,25 @@ public class ActivityMain extends AppCompatActivity {
             }
 
             @Override
-            void connectionDeviceSuccess() {
+            public void connectionDeviceSuccess() {
 
             }
 
             @Override
-            void disConnectionSuccess() {
+            void onScaning() {
 
             }
+
+            @Override
+            void onScanStop() {
+
+            }
+
+            @Override
+            public void disConnectionSuccess() {
+
+            }
+
         };
         Button btnuninit = (Button) findViewById(R.id.btn_uninit);
         Button btninit = (Button) findViewById(R.id.btn_init);
