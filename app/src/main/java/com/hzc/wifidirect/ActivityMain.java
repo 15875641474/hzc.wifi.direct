@@ -101,7 +101,6 @@ public class ActivityMain extends AppCompatActivity {
         });
 
         iHzcWifiDirectHelp = HzcWifiDirectHelpImpl.newInstance();
-
         //断开
         btndisconnection.setOnClickListener(new View.OnClickListener() {
             @Override
