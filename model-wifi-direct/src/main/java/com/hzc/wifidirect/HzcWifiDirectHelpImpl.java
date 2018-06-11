@@ -182,16 +182,16 @@ public class HzcWifiDirectHelpImpl implements IHzcWifiDirectHelp {
             @Override
             public void onSuccess() {
                 Log.i(tag, "started search device");
-                if (onSearchDevicesSuccessListener != null) {
-                    onSearchDevicesSuccessListener.searchDevicesSuccess();
+                if (onScanStartListener != null) {
+                    onScanStartListener.onSuccess();
                 }
             }
 
             @Override
             public void onFailure(int i) {
                 Log.i(tag, "startSearch search device error");
-                if (onSearchDevicesFailureListener != null) {
-                    onSearchDevicesFailureListener.searchDevicesFailure(i);
+                if (onScanStartListener != null) {
+                    onScanStartListener.onError();
                 }
             }
         });
@@ -218,8 +218,8 @@ public class HzcWifiDirectHelpImpl implements IHzcWifiDirectHelp {
                         //获得设备列表
                         @Override
                         public void onPeersAvailable(WifiP2pDeviceList wifiP2pDeviceList) {
-                            if (onGetDevicesListListener != null) {
-                                onGetDevicesListListener.onGetDevicesList(wifiP2pDeviceList);
+                            if (onScanDevicesListener != null) {
+                                onScanDevicesListener.onFindDevices(wifiP2pDeviceList);
                             }
                         }
                     });
@@ -260,14 +260,13 @@ public class HzcWifiDirectHelpImpl implements IHzcWifiDirectHelp {
     OnCheckedWifiDeviceSupportListener onCheckedWifiDeviceSupportListener;
     OnConnectionDeviceSuccessListener onConnectionDeviceSuccessListener;
     OnDisConnectionListener onDisConnectionListener;
-    OnGetDevicesListListener onGetDevicesListListener;
-    OnSearchDevicesSuccessListener onSearchDevicesSuccessListener;
+    OnScanDevicesListener onScanDevicesListener;
+    OnScanStartListener onScanStartListener;
     OnScaningListener onScaningListener;
     OnScanStopListener onScanStopListener;
     OnDisConnectionSuccessListener onDisConnectionSuccessListener;
     OnDisConnectionFailureListener onDisConnectionFailureListener;
     OnConnectionDeviceFailureListener onConnectionDeviceFailureListener;
-    OnSearchDevicesFailureListener onSearchDevicesFailureListener;
 
     public interface OnCheckedWifiDeviceSupportListener {
         void checkedWifiDeviceSupport(boolean support);
@@ -281,12 +280,14 @@ public class HzcWifiDirectHelpImpl implements IHzcWifiDirectHelp {
         void disConnection(NetworkInfo networkInfo);
     }
 
-    public interface OnGetDevicesListListener {
-        void onGetDevicesList(WifiP2pDeviceList wifiP2pDeviceList);
+    public interface OnScanDevicesListener {
+        void onFindDevices(WifiP2pDeviceList wifiP2pDeviceList);
     }
 
-    public interface OnSearchDevicesSuccessListener {
-        void searchDevicesSuccess();
+    public interface OnScanStartListener {
+        void onSuccess();
+
+        void onError();
     }
 
     public interface OnScaningListener {
@@ -309,9 +310,6 @@ public class HzcWifiDirectHelpImpl implements IHzcWifiDirectHelp {
         void connectionDeviceFailure(int i);
     }
 
-    public interface OnSearchDevicesFailureListener {
-        void searchDevicesFailure(int i);
-    }
 
     public void setOnCheckedWifiDeviceSupportListener(OnCheckedWifiDeviceSupportListener onCheckedWifiDeviceSupportListener) {
         this.onCheckedWifiDeviceSupportListener = onCheckedWifiDeviceSupportListener;
@@ -325,13 +323,10 @@ public class HzcWifiDirectHelpImpl implements IHzcWifiDirectHelp {
         this.onDisConnectionListener = onDisConnectionListener;
     }
 
-    public void setOnGetDevicesListListener(OnGetDevicesListListener onGetDevicesListListener) {
-        this.onGetDevicesListListener = onGetDevicesListListener;
+    public void setOnScanDevicesListener(OnScanDevicesListener onScanDevicesListener) {
+        this.onScanDevicesListener = onScanDevicesListener;
     }
 
-    public void setOnSearchDevicesSuccessListener(OnSearchDevicesSuccessListener onSearchDevicesSuccessListener) {
-        this.onSearchDevicesSuccessListener = onSearchDevicesSuccessListener;
-    }
 
     public void setOnScaningListener(OnScaningListener onScaningListener) {
         this.onScaningListener = onScaningListener;
@@ -339,6 +334,10 @@ public class HzcWifiDirectHelpImpl implements IHzcWifiDirectHelp {
 
     public void setOnScanStopListener(OnScanStopListener onScanStopListener) {
         this.onScanStopListener = onScanStopListener;
+    }
+
+    public void setOnScanStartListener(OnScanStartListener onScanStartListener) {
+        this.onScanStartListener = onScanStartListener;
     }
 
     public void setOnDisConnectionSuccessListener(OnDisConnectionSuccessListener onDisConnectionSuccessListener) {
@@ -353,7 +352,4 @@ public class HzcWifiDirectHelpImpl implements IHzcWifiDirectHelp {
         this.onConnectionDeviceFailureListener = onConnectionDeviceFailureListener;
     }
 
-    public void setOnSearchDevicesFailureListener(OnSearchDevicesFailureListener onSearchDevicesFailureListener) {
-        this.onSearchDevicesFailureListener = onSearchDevicesFailureListener;
-    }
 }

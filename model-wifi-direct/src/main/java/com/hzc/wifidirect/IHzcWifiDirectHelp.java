@@ -67,9 +67,9 @@ public interface IHzcWifiDirectHelp {
 
     void setOnDisConnectionListener(HzcWifiDirectHelpImpl.OnDisConnectionListener onDisConnectionListener);
 
-    void setOnGetDevicesListListener(HzcWifiDirectHelpImpl.OnGetDevicesListListener onGetDevicesListListener);
+    void setOnScanDevicesListener(HzcWifiDirectHelpImpl.OnScanDevicesListener onScanDevicesListener);
 
-    void setOnSearchDevicesSuccessListener(HzcWifiDirectHelpImpl.OnSearchDevicesSuccessListener onSearchDevicesSuccessListener);
+    void setOnScanStartListener(HzcWifiDirectHelpImpl.OnScanStartListener onScanStartListener);
 
     void setOnScaningListener(HzcWifiDirectHelpImpl.OnScaningListener onScaningListener);
 
@@ -81,5 +81,4 @@ public interface IHzcWifiDirectHelp {
 
     void setOnConnectionDeviceFailureListener(HzcWifiDirectHelpImpl.OnConnectionDeviceFailureListener onConnectionDeviceFailureListener);
 
-    void setOnSearchDevicesFailureListener(HzcWifiDirectHelpImpl.OnSearchDevicesFailureListener onSearchDevicesFailureListener);
 }

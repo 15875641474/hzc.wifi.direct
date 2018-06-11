@@ -80,9 +80,9 @@ public class ActivityMain extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 iHzcWifiDirectHelp.init(ActivityMain.this);
-                iHzcWifiDirectHelp.setOnGetDevicesListListener(new HzcWifiDirectHelpImpl.OnGetDevicesListListener() {
+                iHzcWifiDirectHelp.setOnScanDevicesListener(new HzcWifiDirectHelpImpl.OnScanDevicesListener() {
                     @Override
-                    public void onGetDevicesList(WifiP2pDeviceList wifiP2pDeviceList) {
+                    public void onFindDevices(WifiP2pDeviceList wifiP2pDeviceList) {
                         wifiP2pDevices.clear();
                         for (WifiP2pDevice device : wifiP2pDeviceList.getDeviceList()) {
                             wifiP2pDevices.add(device);
