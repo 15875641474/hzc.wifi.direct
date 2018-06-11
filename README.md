@@ -24,7 +24,7 @@ allprojects {
 
 
 dependencies {
-    implementation 'com.github.15875641474:hzc.wifi.direct:v1.0.8'
+    implementation 'com.github.15875641474:hzc.wifi.direct:v1.0.9'
 }
 ```
 
@@ -34,7 +34,6 @@ IHzcWifiDirectHelp xx = HzcWifiDirectHelpImpl.newInstance();
 IHzcWifiDirectHelp.init
 IHzcWifiDirectHelp.startSearch
 IHzcWifiDirectHelp.connectionDevice
-IHzcWifiDirectHelp.set**Listener
 ```
 just done，so easy !!
 
